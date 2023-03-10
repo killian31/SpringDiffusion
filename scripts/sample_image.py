@@ -39,7 +39,7 @@ def sample_timestep(x, t, model, betas):
             return model_mean + torch.sqrt(posterior_variance_t) * noise
 
 
-def sample_save_image(model, betas, img_size, device, T):
+def sample_save_image(model, betas, img_file, img_size, device, T):
     # Sample noise
     img = torch.randn((1, 3, img_size, img_size), device=device)
 
@@ -52,4 +52,4 @@ def sample_save_image(model, betas, img_size, device, T):
             img = sample_timestep(img, t, model, betas)
             if i % stepsize == 0:
                 img = np.transpose(img.detach().cpu().squeeze(), (1, 2, 0))
-                cv2.imwrite(f"images/{i}.png", img * 255)
+                cv2.imwrite(f"images/{img_file}_{i}.png", img * 255)
