@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 import torch
 import torch.nn.functional as F
@@ -20,15 +21,37 @@ def get_index_from_list(vals, t, x_shape):
     return out.reshape(batch_size, *((1,) * (len(x_shape) - 1))).to(t.device)
 
 
+def compute_alphas(betas):
+    alphas = 1.0 - betas
+    alphas_cumprod = torch.cumprod(alphas, axis=0)
+    alphas_cumprod_prev = F.pad(alphas_cumprod[:-1], (1, 0), value=1.0)
+    sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
+    sqrt_one_minus_alphas_cumprod = torch.sqrt(1.0 - alphas_cumprod)
+    sqrt_recip_alphas = torch.sqrt(1.0 / alphas)
+    posterior_variance = betas * (1.0 - alphas_cumprod_prev) / (1.0 - alphas_cumprod)
+    return (
+        alphas,
+        alphas_cumprod,
+        sqrt_alphas_cumprod,
+        sqrt_one_minus_alphas_cumprod,
+        sqrt_recip_alphas,
+        posterior_variance,
+    )
+
+
 def forward_diffusion_sample(x_0, t, betas, device="cpu"):
     """
     Takes an image and a timestep as input and
     returns the noisy version of it
     """
-    alphas = 1.0 - betas
-    alphas_cumprod = torch.cumprod(alphas, axis=0)
-    sqrt_alphas_cumprod = torch.sqrt(alphas_cumprod)
-    sqrt_one_minus_alphas_cumprod = torch.sqrt(1.0 - alphas_cumprod)
+    (
+        _,
+        _,
+        sqrt_alphas_cumprod,
+        sqrt_one_minus_alphas_cumprod,
+        _,
+        _,
+    ) = compute_alphas(betas)
 
     noise = torch.randn_like(x_0)
     sqrt_alphas_cumprod_t = get_index_from_list(sqrt_alphas_cumprod, t, x_0.shape)
@@ -58,3 +81,9 @@ def load_transformed_dataset(img_size):
         root=".", download=True, transform=data_transform, split="test"
     )
     return torch.utils.data.ConcatDataset([train, test])
+
+
+def get_loss(model, x_0, t):
+    x_noisy, noise = forward_diffusion_sample(x_0, t, device)
+    noise_pred = model(x_noisy, t)
+    return F.l1_loss(noise, noise_pred)
