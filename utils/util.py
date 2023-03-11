@@ -64,25 +64,6 @@ def forward_diffusion_sample(x_0, t, betas, device="cpu"):
     ) + sqrt_one_minus_alphas_cumprod_t.to(device) * noise.to(device), noise.to(device)
 
 
-def load_transformed_dataset(img_size):
-    data_transforms = [
-        transforms.Resize((img_size, img_size)),
-        transforms.RandomHorizontalFlip(),
-        transforms.ToTensor(),  # Scales data into [0,1]
-        transforms.Lambda(lambda t: (t * 2) - 1),  # Scale between [-1, 1]
-    ]
-    data_transform = transforms.Compose(data_transforms)
-
-    train = torchvision.datasets.StanfordCars(
-        root=".", download=True, transform=data_transform
-    )
-
-    test = torchvision.datasets.StanfordCars(
-        root=".", download=True, transform=data_transform, split="test"
-    )
-    return torch.utils.data.ConcatDataset([train, test])
-
-
 def get_loss(model, x_0, t, device):
     x_noisy, noise = forward_diffusion_sample(x_0, t, device)
     noise_pred = model(x_noisy, t)
