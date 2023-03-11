@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import torch
+from tqdm import tqdm
 
 from utils.util import compute_alphas, get_index_from_list
 
@@ -45,11 +46,11 @@ def sample_save_image(model, betas, img_file, img_size, device, T):
 
     num_images = 10
     stepsize = int(T / num_images)
-
-    for i in range(0, T)[::-1]:
+    print("Saving sample images...")
+    for i in tqdm(range(0, T)[::-1]):
         with torch.no_grad():
             t = torch.full((1,), i, device=device, dtype=torch.long)
             img = sample_timestep(img, t, model, betas)
             if i % stepsize == 0:
-                img = np.transpose(img.detach().cpu().squeeze(), (1, 2, 0))
-                cv2.imwrite(f"images/{img_file}_{i}.png", img * 255)
+                img_np = np.transpose(img.detach().cpu().squeeze().numpy(), (1, 2, 0))
+                cv2.imwrite(f"images/{img_file}_{i}.png", img_np * 255)
