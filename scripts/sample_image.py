@@ -1,3 +1,5 @@
+import os
+
 import cv2
 import numpy as np
 import torch
@@ -43,6 +45,9 @@ def sample_timestep(x, t, model, betas):
 def sample_save_image(model, betas, img_file, img_size, device, T):
     # Sample noise
     img = torch.randn((1, 3, img_size, img_size), device=device)
+
+    if not os.path.exists("images"):
+        os.makedirs("images")
 
     num_images = 10
     stepsize = int(T / num_images)
