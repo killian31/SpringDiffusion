@@ -64,7 +64,7 @@ def forward_diffusion_sample(x_0, t, betas, device="cpu"):
     ) + sqrt_one_minus_alphas_cumprod_t.to(device) * noise.to(device), noise.to(device)
 
 
-def get_loss(model, x_0, t, device):
-    x_noisy, noise = forward_diffusion_sample(x_0, t, device)
+def get_loss(model, x_0, t, betas, device):
+    x_noisy, noise = forward_diffusion_sample(x_0, t, betas, device)
     noise_pred = model(x_noisy, t)
     return F.l1_loss(noise, noise_pred)

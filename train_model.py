@@ -1,10 +1,11 @@
+import os
 import sys
 
 import torch
 from torch.optim import Adam
 from torch.utils.data import DataLoader
 
-sys.path.append("../")
+sys.path.append("./../")
 from models.UNet import SimpleUnet
 from scripts.train import train
 from utils.datasets import load_transformed_flowers
@@ -23,9 +24,14 @@ if __name__ == "__main__":
     T = 300
     betas = linear_beta_schedule(timesteps=T)
     model = SimpleUnet()
+    if os.path.exists("./weights/weights.pt"):
+        model.load_state_dict(torch.load("./weights/weights.pt"))
     optimizer = Adam(model.parameters(), lr=1e-3)
     epochs = 100
-
-    model, losses = train(
-        optimizer, epochs, device, dataloader, batch_size, T, model, img_size, betas
-    )
+    try:
+        model, losses = train(
+            optimizer, epochs, device, dataloader, batch_size, T, model, img_size, betas
+        )
+    except KeyboardInterrupt:
+        print("Training interupted. Saving weights in ./weights/weights.pt")
+        torch.save(model.state_dict(), "./weights/weights.pt")
