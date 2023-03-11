@@ -33,6 +33,7 @@ if __name__ == "__main__":
         model, losses = train(
             optimizer, epochs, device, dataloader, batch_size, T, model, img_size, betas
         )
+        torch.save(model.state_dict(), "./weights/weights.pt")
         plt.figure(figsize=(12, 16))
         plt.plot(losses)
         plt.savefig("./losses.png")
