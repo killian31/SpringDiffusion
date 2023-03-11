@@ -1,5 +1,6 @@
 import sys
 
+import matplotlib.pyplot as plt
 import torch
 from tqdm import tqdm
 
@@ -28,9 +29,22 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
                     pbar.set_description(
                         f"Epoch {epoch} | step {step:03d} Loss: {loss.item()}"
                     )
-            sample_save_image(model, betas, epoch, img_size, device, T)
 
+            sample_save_image(model, betas, epoch, img_size, device, T)
             losses.append(sum(batch_losses) / len(batch_losses))
+
+        torch.save(model.state_dict(), "./weights/weights.pt")
+        plt.figure(figsize=(12, 16))
+        plt.plot(losses)
+        plt.savefig("./losses.png")
+
         return model, losses
+
     except KeyboardInterrupt:
+        print("Training interrupted. Saving weights in ./weights/weights.pt")
+        torch.save(model.state_dict(), "./weights/weights.pt")
+        plt.figure(figsize=(12, 16))
+        plt.plot(losses)
+        plt.savefig("./losses.png")
+
         return model, losses

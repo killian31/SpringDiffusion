@@ -27,19 +27,10 @@ if __name__ == "__main__":
     model = SimpleUnet()
     if os.path.exists("./weights/weights.pt"):
         model.load_state_dict(torch.load("./weights/weights.pt"))
+    else:
+        os.makedirs("./weights", exist_ok=True)
     optimizer = Adam(model.parameters(), lr=1e-3)
     epochs = 10
-    try:
-        model, losses = train(
-            optimizer, epochs, device, dataloader, batch_size, T, model, img_size, betas
-        )
-        torch.save(model.state_dict(), "./weights/weights.pt")
-        plt.figure(figsize=(12, 16))
-        plt.plot(losses)
-        plt.savefig("./losses.png")
-    except KeyboardInterrupt:
-        print("Training interupted. Saving weights in ./weights/weights.pt")
-        torch.save(model.state_dict(), "./weights/weights.pt")
-        plt.figure(figsize=(12, 16))
-        plt.plot(losses)
-        plt.savefig("./losses.png")
+    model, losses = train(
+        optimizer, epochs, device, dataloader, batch_size, T, model, img_size, betas
+    )
