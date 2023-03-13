@@ -1,3 +1,4 @@
+import argparse
 import os
 import sys
 
@@ -18,11 +19,11 @@ if __name__ == "__main__":
     else:
         device = "cpu"
 
-    img_size = 64
+    img_size = 128
     data = load_transformed_flowers(img_size)
     batch_size = 128
     dataloader = DataLoader(data, batch_size=batch_size, shuffle=True, drop_last=True)
-    T = 300
+    T = 1000
     betas = linear_beta_schedule(timesteps=T)
     model = SimpleUnet()
     if os.path.exists("./weights/weights.pt"):
@@ -30,7 +31,7 @@ if __name__ == "__main__":
     else:
         os.makedirs("./weights", exist_ok=True)
     optimizer = Adam(model.parameters(), lr=1e-3)
-    epochs = 10
+    epochs = 100
     model, losses = train(
         optimizer, epochs, device, dataloader, batch_size, T, model, img_size, betas
     )
