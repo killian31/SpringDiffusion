@@ -49,7 +49,7 @@ def sample_save_image(model, betas, img_file, img_size, device, T):
     if not os.path.exists("images"):
         os.makedirs("images")
 
-    num_images = 10
+    num_images = 1
     stepsize = int(T / num_images)
     print("Saving sample images...")
     for i in tqdm(range(0, T)[::-1]):
