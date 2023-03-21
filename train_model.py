@@ -29,12 +29,13 @@ parser.add_argument(
     default=None,
     help="model checkpoint to resume training from",
 )
+parser.add_argument("--gpuid", type=int, default=0, help="gpu id")
 if __name__ == "__main__":
+    args = parser.parse_args()
     if torch.cuda.is_available():
-        device = "cuda"
+        device = f"cuda:{args.gpuid}"
     else:
         device = "cpu"
-    args = parser.parse_args()
     data = load_transformed_flowers(args.img_size)
     dataloader = DataLoader(
         data, batch_size=args.batch_size, shuffle=True, drop_last=True
