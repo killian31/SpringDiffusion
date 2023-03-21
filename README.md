@@ -1,6 +1,10 @@
 # SpringDiffusion
 An simple example of a diffusion model to generate flowers, written in python.
 
+- [Getting started](#getting-started)
+  * [Install](#install)
+  * [Usage](#usage)
+
 ## Getting started
 ### Install
 Clone this repo and install requirements:
