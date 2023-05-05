@@ -3,7 +3,6 @@ import sys
 import matplotlib.pyplot as plt
 import requests
 import torch
-from tqdm import tqdm
 
 sys.path.append("../")
 
@@ -11,7 +10,11 @@ from scripts.sample_image import sample_save_image
 from utils.util import get_loss
 
 
-def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size, betas):
+def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size, betas, use_colab=False):
+    if not use_colab:
+        from tqdm import tqdm
+    else:
+        from tqdm.notebook import tqdm
     ntfy_name = f"train_spring_{epochs}_{batch_size}_{T}_{img_size}"
     print(f"Sending notifications to ntfy.sh/{ntfy_name}")
     requests.post(
