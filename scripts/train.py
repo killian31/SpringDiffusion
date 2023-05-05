@@ -25,21 +25,20 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
     try:
         model.to(device)
         losses = []
-        pbar = tqdm(range(epochs))
         for epoch in range(epochs):
             batch_losses = []
-            for step, batch in enumerate(dataloader):
-                optimizer.zero_grad()
+            with pbar as enumerate(dataloader)
+                for step, batch in pbar:
+                    optimizer.zero_grad()
 
-                t = torch.randint(0, T, (batch_size,), device=device).long()
-                loss = get_loss(model, batch[0], t, betas, device)
-                loss.backward()
-                optimizer.step()
-                batch_losses.append(loss.item())
-                pbar.set_description(
-                    f"Epoch {epoch} | step {step:03d} Loss: {loss.item()}"
-                )
-            pbar.update(1)
+                    t = torch.randint(0, T, (batch_size,), device=device).long()
+                    loss = get_loss(model, batch[0], t, betas, device)
+                    loss.backward()
+                    optimizer.step()
+                    batch_losses.append(loss.item())
+                    pbar.set_description(
+                        f"Epoch {epoch} | step {step:03d} Loss: {loss.item()}"
+                    )
 
             sample_save_image(model, betas, epoch, img_size, device, T, use_colab)
             losses.append(sum(batch_losses) / len(batch_losses))
