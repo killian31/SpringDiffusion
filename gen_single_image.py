@@ -31,6 +31,7 @@ parser.add_argument(
     default="image_sample",
     help="image directory in which to save image",
 )
+parser.add_argument("--use_colab", action="store_true", default=False)
 if __name__ == "__main__":
     if torch.cuda.is_available():
         device = "cuda"
@@ -50,5 +51,5 @@ if __name__ == "__main__":
         print("No model weights provided")
 
     sample_save_image(
-        model, betas, args.output_dir, args.img_size, device, args.sampling_steps
+        model, betas, args.output_dir, args.img_size, device, args.sampling_steps, args.use_colab
     )
