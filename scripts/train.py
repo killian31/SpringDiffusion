@@ -27,7 +27,7 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
         losses = []
         for epoch in range(epochs):
             batch_losses = []
-            with pbar as enumerate(dataloader):
+            with tqdm(dataloader, unit="batch") as pbar:
                 for step, batch in pbar:
                     optimizer.zero_grad()
 
