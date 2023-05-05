@@ -28,7 +28,7 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
         for epoch in range(epochs):
             batch_losses = []
             with tqdm(dataloader, unit="batch") as pbar:
-                for step, batch in pbar:
+                for step, batch in enumerate(pbar):
                     optimizer.zero_grad()
 
                     t = torch.randint(0, T, (batch_size,), device=device).long()
