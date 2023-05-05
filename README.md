@@ -12,7 +12,7 @@ Clone this repo and install requirements:
 ```
 git clone https://github.com/killian31/SpringDiffusion.git
 cd SpringDiffusion
-pip install requirements.txt --upgrade
+pip install -r requirements.txt --upgrade
 ``` 
 ### Usage
 Run this in your terminal:
