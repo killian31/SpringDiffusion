@@ -22,21 +22,20 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
     try:
         model.to(device)
         losses = []
-        for epoch in range(epochs):
-            pbar = tqdm(enumerate(dataloader), unit="batch")
+        pbar = tqdm(range(epochs))
+        for epoch in pbar:
             batch_losses = []
-            with tqdm(dataloader, unit="batch") as pbar:
-                for step, batch in enumerate(pbar):
-                    optimizer.zero_grad()
+            for step, batch in enumerate(dataloader):
+                optimizer.zero_grad()
 
-                    t = torch.randint(0, T, (batch_size,), device=device).long()
-                    loss = get_loss(model, batch[0], t, betas, device)
-                    loss.backward()
-                    optimizer.step()
-                    batch_losses.append(loss.item())
-                    pbar.set_description(
-                        f"Epoch {epoch} | step {step:03d} Loss: {loss.item()}"
-                    )
+                t = torch.randint(0, T, (batch_size,), device=device).long()
+                loss = get_loss(model, batch[0], t, betas, device)
+                loss.backward()
+                optimizer.step()
+                batch_losses.append(loss.item())
+                pbar.set_description(
+                    f"Epoch {epoch} | step {step:03d} Loss: {loss.item()}"
+                )
 
             sample_save_image(model, betas, epoch, img_size, device, T)
             losses.append(sum(batch_losses) / len(batch_losses))
@@ -53,6 +52,7 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
                 data=open(f"./Current_losses{img_size}.jpg", "rb"),
                 headers={"Filename": f"Current_losses{img_size}.jpg"},
             )
+            plt.close()
 
         torch.save(model.state_dict(), f"./weights/weights{img_size}.pt")
         plt.figure(figsize=(12, 16))
