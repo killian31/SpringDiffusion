@@ -3,7 +3,6 @@ import os
 import cv2
 import numpy as np
 import torch
-from tqdm import tqdm
 
 from utils.util import compute_alphas, get_index_from_list
 
@@ -42,7 +41,11 @@ def sample_timestep(x, t, model, betas):
             return model_mean + torch.sqrt(posterior_variance_t) * noise
 
 
-def sample_save_image(model, betas, img_file, img_size, device, T):
+def sample_save_image(model, betas, img_file, img_size, device, T, use_colab):
+    if not use_colab:
+        from tqdm import tqdm
+    else:
+        from tqdm.notebook import tqdm
     # Sample noise
     img = torch.randn((1, 3, img_size, img_size), device=device)
 
