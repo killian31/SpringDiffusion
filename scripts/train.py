@@ -26,7 +26,7 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
         model.to(device)
         losses = []
         pbar = tqdm(range(epochs))
-        for epoch in pbar:
+        for epoch in range(epochs):
             batch_losses = []
             for step, batch in enumerate(dataloader):
                 optimizer.zero_grad()
@@ -39,8 +39,9 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
                 pbar.set_description(
                     f"Epoch {epoch} | step {step:03d} Loss: {loss.item()}"
                 )
+            pbar.update(1)
 
-            sample_save_image(model, betas, epoch, img_size, device, T)
+            sample_save_image(model, betas, epoch, img_size, device, T, use_colab)
             losses.append(sum(batch_losses) / len(batch_losses))
             requests.post(
                 f"https://ntfy.sh/{ntfy_name}",
