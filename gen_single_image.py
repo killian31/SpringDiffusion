@@ -49,7 +49,7 @@ if __name__ == "__main__":
             )
     else:
         print("No model weights provided")
-
+    model = model.to(device)
     sample_save_image(
         model, betas, args.output_dir, args.img_size, device, args.sampling_steps, args.use_colab
     )
