@@ -26,10 +26,10 @@ parser.add_argument(
     help="model weights",
 )
 parser.add_argument(
-    "--output-dir",
+    "--filename",
     type=str,
     default="image_sample",
-    help="image directory in which to save image",
+    help="image file name",
 )
 parser.add_argument("--use_colab", action="store_true", default=False)
 if __name__ == "__main__":
@@ -51,5 +51,5 @@ if __name__ == "__main__":
         print("No model weights provided")
     model = model.to(device)
     sample_save_image(
-        model, betas, args.output_dir, args.img_size, device, args.sampling_steps, args.use_colab
+        model, betas, args.filename, args.img_size, device, args.sampling_steps, args.use_colab
     )
