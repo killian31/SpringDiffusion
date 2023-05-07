@@ -40,7 +40,7 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
                         f"Epoch {epoch} | step {step:03d} Loss: {loss.item()}"
                     )
 
-            sample_save_image(model, betas, epoch, img_size, device, 200, use_colab)
+            sample_save_image(model, betas, epoch, img_size, device, 350, use_colab)
             losses.append(sum(batch_losses) / len(batch_losses))
             requests.post(
                 f"https://ntfy.sh/{ntfy_name}",
