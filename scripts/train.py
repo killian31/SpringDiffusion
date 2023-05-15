@@ -6,6 +6,8 @@ import torch
 
 sys.path.append("../")
 
+from tqdm import tqdm
+
 from scripts.sample_image import sample_save_image
 from utils.util import get_loss
 
@@ -20,12 +22,8 @@ def train(
     model,
     img_size,
     betas,
-    use_colab=False,
+    T_test,
 ):
-    if not use_colab:
-        from tqdm import tqdm
-    else:
-        from tqdm.notebook import tqdm
     ntfy_name = f"train_spring_{epochs}_{batch_size}_{T}_{img_size}"
     print(f"Sending notifications to ntfy.sh/{ntfy_name}")
     requests.post(
@@ -51,7 +49,7 @@ def train(
                         f"Epoch {epoch} | step {step:03d} Loss: {loss.item()}"
                     )
 
-            sample_save_image(model, betas, epoch, img_size, device, 350, use_colab)
+            sample_save_image(model, betas, epoch, img_size, device, T_test, use_colab)
             losses.append(sum(batch_losses) / len(batch_losses))
             requests.post(
                 f"https://ntfy.sh/{ntfy_name}",

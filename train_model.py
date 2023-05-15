@@ -14,13 +14,22 @@ from utils.util import linear_beta_schedule
 
 parser = argparse.ArgumentParser()
 
-parser.add_argument("--img-size", type=int, default=128, help="size of output images")
-parser.add_argument("--batch-size", type=int, default=32, help="size of the batches")
+parser.add_argument("--img_size", type=int, default=128, help="size of output images")
+parser.add_argument("--batch_size", type=int, default=64, help="size of the batches")
 parser.add_argument(
-    "--sampling-steps", type=int, default=1000, help="number of sampling steps"
+    "--sampling_steps_train",
+    type=int,
+    default=2000,
+    help="number of train sampling steps",
 )
 parser.add_argument(
-    "--epochs", type=int, default=20, help="number of epochs to train for"
+    "--sampling_steps_test",
+    type=int,
+    default=1000,
+    help="number of test sampling steps",
+)
+parser.add_argument(
+    "--epochs", type=int, default=1000, help="number of epochs to train for"
 )
 parser.add_argument("--lr", type=float, default=0.001, help="adam: learning rate")
 parser.add_argument(
@@ -29,7 +38,6 @@ parser.add_argument(
     default=None,
     help="model checkpoint to resume training from",
 )
-parser.add_argument("--use_colab", action="store_true", default=False)
 parser.add_argument("--gpuid", type=int, default=0, help="gpu id")
 if __name__ == "__main__":
     args = parser.parse_args()
@@ -41,7 +49,7 @@ if __name__ == "__main__":
     dataloader = DataLoader(
         data, batch_size=args.batch_size, shuffle=True, drop_last=True
     )
-    betas = linear_beta_schedule(timesteps=args.sampling_steps)
+    betas = linear_beta_schedule(timesteps=args.sampling_steps_train)
     model = SimpleUnet()
     if args.checkpoint is not None:
         model.load_state_dict(torch.load(args.checkpoint))
@@ -54,9 +62,9 @@ if __name__ == "__main__":
         device,
         dataloader,
         args.batch_size,
-        args.sampling_steps,
+        args.sampling_steps_train,
         model,
         args.img_size,
         betas,
-        args.use_colab
+        args.sampling_steps_test,
     )
