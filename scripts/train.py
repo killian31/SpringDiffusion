@@ -10,7 +10,18 @@ from scripts.sample_image import sample_save_image
 from utils.util import get_loss
 
 
-def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size, betas, use_colab=False):
+def train(
+    optimizer,
+    epochs,
+    device,
+    dataloader,
+    batch_size,
+    T,
+    model,
+    img_size,
+    betas,
+    use_colab=False,
+):
     if not use_colab:
         from tqdm import tqdm
     else:
@@ -49,12 +60,7 @@ def train(optimizer, epochs, device, dataloader, batch_size, T, model, img_size,
             )
             plt.figure(figsize=(12, 16))
             plt.plot(losses)
-            plt.savefig(f"./Current_losses{img_size}.jpg")
-            requests.put(
-                f"https://ntfy.sh/{ntfy_name}",
-                data=open(f"./Current_losses{img_size}.jpg", "rb"),
-                headers={"Filename": f"Current_losses{img_size}.jpg"},
-            )
+            plt.savefig(f"./Current_losses{img_size}.png")
             plt.close()
 
         torch.save(model.state_dict(), f"./weights/weights{img_size}.pt")
